@@ -419,7 +419,7 @@ def marker_channel_number(self, markers, marker_name):
     return channel_number
 
 
-def reorganize_dfcolumns(data, markers, cluster_dim):
+def reorganize_dfcolumns(data, markers, cluster_dim, self):
 
     first_cols = (
         ['CellID'] +
@@ -427,7 +427,7 @@ def reorganize_dfcolumns(data, markers, cluster_dim):
          i in data.columns] +
         [f'{i}_bool' for i in markers['marker_name'] if
          f'{i}_bool' in data.columns] +
-        [i for i in ['X_centroid', 'Y_centroid', 'Area', 'MajorAxisLength',
+        [i for i in [self.xCoordinateCol, self.yCoordinateCol, 'Area', 'MajorAxisLength',
                      'MinorAxisLength', 'Eccentricity', 'Solidity', 'Extent',
                      'Orientation', 'Sample', 'Condition', 'Replicate'] if i in data.columns]
     )

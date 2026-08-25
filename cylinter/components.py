@@ -77,6 +77,9 @@ class QC(object):
                  samplesToExclude=None,
                  counterstainChannel=None,
                  markersToExclude=None,
+                 xCoordinateCol=None,
+                 yCoordinateCol=None,
+                 pixelSize=None,
 
                  # selectROIs -
                  delintMode=None,
@@ -176,6 +179,9 @@ class QC(object):
         self.samplesToExclude = samplesToExclude
         self.counterstainChannel = counterstainChannel
         self.markersToExclude = markersToExclude
+        self.xCoordinateCol = xCoordinateCol
+        self.yCoordinateCol = yCoordinateCol
+        self.pixelSize = pixelSize
 
         self.delintMode = delintMode
         self.showAbChannels = showAbChannels

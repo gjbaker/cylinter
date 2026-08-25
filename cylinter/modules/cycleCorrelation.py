@@ -242,7 +242,7 @@ def callback(self, viewer, sample, samples_to_run, data, ratios_melt, initial_ca
             sample_data = data[data['Sample'] == sample]
             drop_df = sample_data.index.isin(idxs)
             centroids = sample_data[
-                ['Y_centroid', 'X_centroid']][~drop_df]
+                [self.yCoordinateCol, self.xCoordinateCol]][~drop_df]
 
             # remove existing centroids, plot new centroid selection in Napari
             if not centroids.empty:
@@ -752,7 +752,7 @@ def cycleCorrelation(data, self, args):
     )
     plt.close('all')
 
-    data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding)
+    data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding, self)
 
     print()
     print()

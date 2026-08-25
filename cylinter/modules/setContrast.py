@@ -355,7 +355,7 @@ def setContrast(data, self, args):
         )
         sys.exit()
     
-    data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding)
+    data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding, self)
 
     print()
     print()

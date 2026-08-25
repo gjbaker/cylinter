@@ -227,12 +227,19 @@ def selectROIs(data, self, args):
                     except:
                         pass
 
+            # cell segmentation outlines channel, read first (regardless of
+            # showAbChannels) to obtain pixel scale/units, which are shared
+            # across all channels of the same image
+            file_path = get_filepath(self, check, sample, 'SEG')
+            seg, seg_min, seg_max, scale, units = single_channel_pyramid(
+                file_path, channel=0)
+
             # antibody channels
             if self.showAbChannels:
                 for ch in reversed(abx_channels):
                     channel_number = marker_channel_number(self, markers, ch)
                     file_path = get_filepath(self, check, sample, 'TIF')
-                    img, min, max, scale, units = single_channel_pyramid(
+                    img, min, max, _, _ = single_channel_pyramid(
                         file_path, channel=channel_number)
                     layer = viewer.add_image(
                         img, rgb=False, blending='additive',
@@ -242,16 +249,14 @@ def selectROIs(data, self, args):
                     global_state.loaded_ims[ch] = img
                     global_state.abx_layers[ch] = layer
 
-            # H&E channel (single image or separate RGB channels), 
+            # H&E channel (single image or separate RGB channels),
             # to be implemented here
 
             # cell segmentation outlines channel
-            file_path = get_filepath(self, check, sample, 'SEG')
-            seg, min, max, _, _ = single_channel_pyramid(file_path, channel=0)
             viewer.add_image(
                 seg, rgb=False, blending='additive', opacity=1.0,
                 colormap='gray', visible=False, name='segmentation',
-                scale=scale, units=units, contrast_limits=(min, max)
+                scale=scale, units=units, contrast_limits=(seg_min, seg_max)
             )
 
             # DNA1 channel
@@ -615,7 +620,7 @@ def selectROIs(data, self, args):
                     global_state.binarized_artifact_mask,
                     global_state.artifact_proba
                 )
-                centroids = data[['Y_centroid', 'X_centroid']][
+                centroids = data[[self.yCoordinateCol, self.xCoordinateCol]][
                     binarized_artifact_mask]
                 points_layer = viewer.layers[-1]
                 points_layer.face_color_mode = 'cycle'
@@ -882,12 +887,12 @@ def selectROIs(data, self, args):
 
                 logger.info(f'Generating ROI mask(s) for sample: {sample}')
 
-                sample_data = data[['X_centroid', 'Y_centroid', 'CellID']][
+                sample_data = data[[self.xCoordinateCol, self.yCoordinateCol, 'CellID']][
                     data['Sample'] == sample].astype(int)
 
                 sample_data['tuple'] = list(
-                    zip(sample_data['X_centroid'],
-                        sample_data['Y_centroid'])
+                    zip(sample_data[self.xCoordinateCol],
+                        sample_data[self.yCoordinateCol])
                 )
 
                 file_path = get_filepath(self, check, sample, 'TIF')
@@ -949,11 +954,11 @@ def selectROIs(data, self, args):
             
             except KeyError:
                 logger.info(f'No ROIs selected for sample: {sample}')
-                sample_data = data[['X_centroid', 'Y_centroid', 'CellID']][
+                sample_data = data[[self.xCoordinateCol, self.yCoordinateCol, 'CellID']][
                     data['Sample'] == sample].astype(int)
                 sample_data['tuple'] = list(
-                    zip(sample_data['X_centroid'],
-                        sample_data['Y_centroid'])
+                    zip(sample_data[self.xCoordinateCol],
+                        sample_data[self.yCoordinateCol])
                 )
                 xs, ys = zip(*sample_data['tuple'])
                 sample_data['inter1'] = False
@@ -1059,10 +1064,10 @@ def selectROIs(data, self, args):
             ax.imshow(dna[-2], cmap='gray', extent=(0, iw, ih, 0))
             ax.grid(False)
             ax.set_axis_off()
-            coords = data[['X_centroid', 'Y_centroid', 'Area']][
+            coords = data[[self.xCoordinateCol, self.yCoordinateCol, 'Area']][
                 data['Sample'] == sample]
             ax.scatter(
-                coords['X_centroid'], coords['Y_centroid'], s=0.35, 
+                coords[self.xCoordinateCol], coords[self.yCoordinateCol], s=0.35,
                 lw=0.0, c='yellow'
             )
             ax.set_title(f'Sample {sample}', size=10)
@@ -1080,7 +1085,7 @@ def selectROIs(data, self, args):
             'selection specified in config.yml'
         )
 
-    data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding)
+    data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding, self)
 
     print()
     print()

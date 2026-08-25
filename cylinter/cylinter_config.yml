@@ -39,6 +39,21 @@ markersToExclude: ["Rabbit IgG", "Goat IgG", "Mouse IgG", "CD56", "CD13",
 # Does not include nuclear dyes. They are needed for the
 # cycleCorrelation module to remove cell dropout.
 
+xCoordinateCol: "X_centroid"
+# (str) Name of the column in the single-cell feature tables (CSV)
+# containing cell X centroid coordinates.
+
+yCoordinateCol: "Y_centroid"
+# (str) Name of the column in the single-cell feature tables (CSV)
+# containing cell Y centroid coordinates.
+
+pixelSize: null
+# (float, optional) Microns per pixel. Set this if the columns specified by
+# xCoordinateCol/yCoordinateCol are in physical units (e.g. microns) rather
+# than pixel units, so they can be converted to pixel units to align with
+# image and segmentation mask arrays. Leave as null if coordinates are
+# already in pixel units.
+
 ###############################################################################
 # MODULE-SPECIFIC CONFIGURATIONS
 

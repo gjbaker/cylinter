@@ -47,6 +47,12 @@ class Config:
         config.samplesToExclude = list(data['samplesToExclude'])
         config.counterstainChannel = str(data['counterstainChannel'])
         config.markersToExclude = list(data['markersToExclude'])
+        config.xCoordinateCol = str(data['xCoordinateCol'])
+        config.yCoordinateCol = str(data['yCoordinateCol'])
+        if data['pixelSize'] is None:
+            config.pixelSize = data['pixelSize']
+        else:
+            config.pixelSize = float(data['pixelSize'])
 
         # CLASS MODULE CONFIGURATIONS
         

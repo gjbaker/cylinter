@@ -441,7 +441,7 @@ def curateThumbnails(data, self, args):
                   os.path.join(thumbnails_dir, 'completed.txt'), 'w') as f:
                     f.write(str(completed))
 
-    data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding)
+    data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding, self)
 
     print()
     return data

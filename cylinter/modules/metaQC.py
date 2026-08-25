@@ -1155,6 +1155,20 @@ def metaQC(data, self, args):
                                              range(0, len(viewer.layers))):
                                             viewer.layers.pop(i)
 
+                                        # read segmentation outlines first
+                                        # (regardless of showAbChannels) to
+                                        # obtain pixel scale/units, which are
+                                        # shared across all channels of the
+                                        # same image
+                                        file_path = get_filepath(
+                                            self, check, value, 'SEG'
+                                        )
+                                        seg, seg_min, seg_max, scale, units = (
+                                            single_channel_pyramid(
+                                                file_path, channel=0
+                                            )
+                                        )
+
                                         if self.showAbChannels:
 
                                             for ch in reversed(abx_channels):
@@ -1166,16 +1180,16 @@ def metaQC(data, self, args):
                                                 file_path = get_filepath(
                                                     self, check, value, 'TIF'
                                                 )
-                                                img, min, max, scale, units = (
+                                                img, min, max, _, _ = (
                                                     single_channel_pyramid(
                                                         file_path,
                                                         channel=channel_number
                                                     )
                                                 )
                                                 viewer.add_image(
-                                                    img, rgb=False, 
+                                                    img, rgb=False,
                                                     blending='additive',
-                                                    colormap='green', 
+                                                    colormap='green',
                                                     visible=False, name=ch,
                                                     scale=scale, units=units,
                                                     contrast_limits=(min, max)
@@ -1199,7 +1213,7 @@ def metaQC(data, self, args):
                                              QC_color_dict.items()):
 
                                             centroids = chunk[
-                                                ['Y_centroid', 'X_centroid']][
+                                                [self.yCoordinateCol, self.xCoordinateCol]][
                                                     (chunk.index.isin(
                                                      selector.ind))
                                                     & (chunk['Sample'] ==
@@ -1215,23 +1229,14 @@ def metaQC(data, self, args):
                                                 scale=scale, units=units,
                                                 border_width=0.0, size=4.0)
 
-                                        # read segmentation outlines,
-                                        # add to Napari
-                                        file_path = get_filepath(
-                                            self, check, value, 'SEG'
-                                        )
-                                        seg, min, max, _, _ = (
-                                            single_channel_pyramid(
-                                                file_path, channel=0
-                                            )
-                                        )
+                                        # add segmentation outlines to Napari
                                         viewer.add_image(
                                             seg, rgb=False,
                                             blending='additive',
                                             colormap='gray',
                                             visible=False, name='segmentation',
-                                            scale=scale, units=units, 
-                                            contrast_limits=(min, max)
+                                            scale=scale, units=units,
+                                            contrast_limits=(seg_min, seg_max)
                                         )
                                         
                                         # get ordered list of DNA cycles
@@ -2003,7 +2008,7 @@ def metaQC(data, self, args):
     if self.metaQC:
         data.drop('handle', axis=1, inplace=True)
 
-    data = reorganize_dfcolumns(data, markers, 2)
+    data = reorganize_dfcolumns(data, markers, 2, self)
 
     print()
     print()

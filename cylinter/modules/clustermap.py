@@ -141,7 +141,7 @@ def clustermap(data, self, args):
                     f' {type} clustermap cannot be generated with only one cell population.'
                 )
 
-    data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding)
+    data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding, self)
 
     print()
     print()

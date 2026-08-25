@@ -1249,6 +1249,16 @@ def clustering(data, self, args):
                         for i in reversed(range(0, len(viewer.layers))):
                             viewer.layers.pop(i)
 
+                        # read segmentation outlines first (regardless of
+                        # showAbChannels) to obtain pixel scale/units, which
+                        # are shared across all channels of the same image
+                        file_path = get_filepath(self, check, value, 'SEG')
+                        seg, seg_min, seg_max, scale, units = (
+                            single_channel_pyramid(
+                                file_path, channel=0
+                            )
+                        )
+
                         if self.showAbChannels:
 
                             for ch in reversed(abx_channels):
@@ -1260,7 +1270,7 @@ def clustering(data, self, args):
                                 file_path = get_filepath(
                                     self, check, value, 'TIF'
                                 )
-                                img, min, max, scale, units = (
+                                img, min, max, _, _ = (
                                     single_channel_pyramid(
                                         file_path, channel=channel_number
                                     )
@@ -1268,12 +1278,12 @@ def clustering(data, self, args):
                                 viewer.add_image(
                                     img, rgb=False, blending='additive',
                                     colormap='green', visible=False, name=ch,
-                                    scale=scale, units=units, 
+                                    scale=scale, units=units,
                                     contrast_limits=(min, max)
                                 )
 
-                        centroids = data[['Y_centroid', 'X_centroid']][
-                            (data.index.isin(selector.ind)) & 
+                        centroids = data[[self.yCoordinateCol, self.xCoordinateCol]][
+                            (data.index.isin(selector.ind)) &
                             (data['Sample'] == value)
                         ]
 
@@ -1283,16 +1293,12 @@ def clustering(data, self, args):
                             scale=scale, units=units
                         )
 
-                        # read segmentation outlines, add to Napari
-                        file_path = get_filepath(self, check, value, 'SEG')
-                        seg, min, max, _, _ = single_channel_pyramid(
-                            file_path, channel=0
-                        )
+                        # add segmentation outlines to Napari
                         viewer.add_image(
                             seg, rgb=False, blending='additive',
                             colormap='gray', visible=False,
                             name='segmentation', scale=scale, units=units,
-                            contrast_limits=(min, max)
+                            contrast_limits=(seg_min, seg_max)
                         )
 
                         # read first DNA, add to Napari
@@ -1604,7 +1610,7 @@ def clustering(data, self, args):
         match_reference_implementation=False).fit(clustering_input)
     data[f'cluster_{self.dimensionEmbedding}d'] = clustering.labels_
 
-    data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding)
+    data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding, self)
 
     # save dataframe in standard CSV format for analysis outside CyLinter
     data.to_csv(

@@ -53,8 +53,8 @@ def aggregateData(data, self, args):
             # select boilerplate columns
             cols = (
                 [i for i in [j for j in markers['marker_name']] +
-                 [i for i in ['CellID', 'X_centroid', 'Y_centroid', 'Area', 'MajorAxisLength',
-                              'MinorAxisLength', 'Eccentricity', 'Solidity', 'Extent', 
+                 [i for i in ['CellID', self.xCoordinateCol, self.yCoordinateCol, 'Area', 'MajorAxisLength',
+                              'MinorAxisLength', 'Eccentricity', 'Solidity', 'Extent',
                               'Orientation'] if i in csv.columns]]
             )
 
@@ -119,6 +119,13 @@ def aggregateData(data, self, args):
                 print(e)
                 sys.exit()
 
+            # convert centroid columns from physical units (e.g. microns) to
+            # pixel units so they align with image and segmentation mask
+            # arrays throughout the pipeline
+            if self.pixelSize:
+                csv[self.xCoordinateCol] = csv[self.xCoordinateCol] / self.pixelSize
+                csv[self.yCoordinateCol] = csv[self.yCoordinateCol] / self.pixelSize
+
             # (for SARDANA)
             # trim mask object names from column headers
             # cols_update = [
@@ -179,7 +186,7 @@ def aggregateData(data, self, args):
 
     # ensure MCMICRO-generated columns come first and
     # are in the same order as csv feature tables
-    data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding)
+    data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding, self)
 
     print()
     print()

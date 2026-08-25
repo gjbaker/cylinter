@@ -215,7 +215,7 @@ def callback(self, viewer, sample, samples_to_run, data, initial_callback, selec
             ]
 
             # isolate x, y coordinates of selected centroids
-            centroids = group_filtered[['Y_centroid', 'X_centroid']]
+            centroids = group_filtered[[self.yCoordinateCol, self.xCoordinateCol]]
 
             # isolate cycle 1 DNA intensity values and assign
             # as quantitative point properties
@@ -590,7 +590,7 @@ def intensityFilter(data, self, args):
     # drop unique ID column
     data.drop(columns='handle', inplace=True)
 
-    data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding)
+    data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding, self)
 
     print()
     print()

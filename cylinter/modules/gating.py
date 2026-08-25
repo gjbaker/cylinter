@@ -196,7 +196,7 @@ def callback(self, viewer, data, hist_widget, hist_layout, selection_widget, sel
         cond = data['Condition'][data['Sample'] == sample].unique().item()
         rep = data['Replicate'][data['Sample'] == sample].unique().item()
 
-        sample_data = data[['X_centroid', 'Y_centroid', marker, 'Area']][
+        sample_data = data[[self.xCoordinateCol, self.yCoordinateCol, marker, 'Area']][
             data['Sample'] == sample]
 
         ###################################################################
@@ -282,7 +282,7 @@ def callback(self, viewer, data, hist_widget, hist_layout, selection_widget, sel
         if current_gate is None:
             pass
         else:
-            centroids = sample_data[['Y_centroid', 'X_centroid']][
+            centroids = sample_data[[self.yCoordinateCol, self.xCoordinateCol]][
                 sample_data[marker] > current_gate]
 
             viewer.add_points(
@@ -421,7 +421,7 @@ def callback(self, viewer, data, hist_widget, hist_layout, selection_widget, sel
                 sample_data[marker] > adjusted_gate].copy()
             
             # isolate x, y coordinates of newly gated centroids
-            centroids = sample_update[['Y_centroid', 'X_centroid']]
+            centroids = sample_update[[self.yCoordinateCol, self.xCoordinateCol]]
 
             # remove existing centroids and
             # plot new centroid selection in Napari window
@@ -1331,7 +1331,7 @@ def gating(data, self, args):
         )
         plt.close('all')
 
-    data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding)
+    data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding, self)
 
     print()
     print()

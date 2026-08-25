@@ -28,7 +28,7 @@ def logTransform(data, self, args):
     #     data.loc[:, abx_channels].clip(lower=percentiles, upper=None, axis=1)
     # )
 
-    data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding)
+    data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding, self)
 
     print()
     print()

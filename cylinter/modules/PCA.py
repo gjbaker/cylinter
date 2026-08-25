@@ -535,7 +535,7 @@ def PCA(data, self, args):
                 bbox_inches='tight')
             plt.close('all')
 
-            data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding)
+            data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding, self)
     else:
         logging.info(
             "n_components = 1. Only 1 sample (or 1 marker) in analysis. "

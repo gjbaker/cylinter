@@ -55,6 +55,9 @@ CyLinter can parse **whole slide image (WSI)** and **tissue microarray (TMA)** m
 | `sampleMetadata` | "Filename": <br />  ["15", "Glioblastoma", "GBM", "CANCER-TRUE", 1] | Sample metadata dictionary: keys = Filenames (str); values = list of strings. First elements: sample names (str, may differ from Filename). Second elements: descriptive text of experimental condition (str). Third elements: abbreviation of experimental condition (str). Fourth elements: comma-delimited string of arbitrary binary declarations for computing t-statistics between two groups of samples (str). Fifth elements: replicate number specifying biological or technical replicates (int). |
 | `samplesToExclude` | [ ] | (list of strs) Sample names (i.e., first elements in `sampleMetadata` values) to exclude from analysis. |
 | `markersToExclude` | [ ] | (list of strs) Markers to exclude from analysis (not including nuclear dyes). |
+| `xCoordinateCol` | "X_centroid" | (str) Name of the column in the single-cell feature tables (CSV) containing cell X centroid coordinates. |
+| `yCoordinateCol` | "Y_centroid" | (str) Name of the column in the single-cell feature tables (CSV) containing cell Y centroid coordinates. |
+| `pixelSize` | null | (float, optional) Microns per pixel. Set this if the columns specified by `xCoordinateCol`/`yCoordinateCol` are in physical units (e.g. microns) rather than pixel units, so they can be converted to pixel units to align with image and segmentation mask arrays. Leave as null if coordinates are already in pixel units. |
 
 ## Module configurations
 For module-specific configuration settings, see [Modules]({{ site.baseurl }}/modules)

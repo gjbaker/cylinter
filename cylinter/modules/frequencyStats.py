@@ -407,7 +407,7 @@ def frequencyStats(data, self, args):
                     print()
         print()
 
-    data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding)
+    data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding, self)
 
     print()
     return data

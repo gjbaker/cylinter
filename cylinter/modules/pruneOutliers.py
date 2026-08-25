@@ -544,13 +544,13 @@ def callback(self, viewer, channel, dfTrim, data, initial_callback, percentiles_
 
             # grab centroids of low signal intensity outliers
             low_centroids = dfTrim[
-                ['Y_centroid', 'X_centroid']][
+                [self.yCoordinateCol, self.xCoordinateCol]][
                 (dfTrim.index.isin(total_low_idxs)) &
                 (dfTrim['Sample'] == sample)]
 
             # grab centroids of high signal intensity outliers
             high_centroids = dfTrim[
-                ['Y_centroid', 'X_centroid']][
+                [self.yCoordinateCol, self.xCoordinateCol]][
                 (dfTrim.index.isin(total_high_idxs)) &
                 (dfTrim['Sample'] == sample)]
 
@@ -1027,7 +1027,7 @@ def pruneOutliers(data, self, args):
 
     #     data.update(rescaled_data)
 
-    data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding)
+    data = reorganize_dfcolumns(data, markers, self.dimensionEmbedding, self)
 
     print()
     print()
